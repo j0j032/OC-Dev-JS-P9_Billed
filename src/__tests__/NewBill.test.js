@@ -111,24 +111,64 @@
          expect(displayErrorOnSubmit).toHaveBeenCalled()
        })
      })
+     describe("test method displayErrorOnSubmit()",()=>{
+      beforeAll(()=>{
+        jest.useFakeTimers();
+      })
+      it("should call setTimeOut for 2second", ()=>{
+        const mockSetTimeOut = jest.spyOn(global, 'setTimeout');
+        newBill.displayErrorOnSubmit()
+        expect(mockSetTimeOut).toHaveBeenCalledTimes(1);
+        expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 2000);
+      })
+    
+      test('at the end, the error should be removed', async()=> {
+       document.body.innerHTML = NewBillUI()
+       const errorSubmission = await waitFor(()=> screen.getByTestId('error-submit'))
+       expect(errorSubmission.classList.contains('hide-error')).toBe(true)
+       expect(errorSubmission.classList.contains('show-error')).toBe(false)
+     })
+     })
    })
+   describe("Test API createFile method", () => {
+    beforeAll(() => {
+      jest.mock("../app/store", () => mockStore)
+      jest.spyOn(mockStore, "bills")
+      document.body.innerHTML = NewBillUI()
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname })
+      }
+      const store = mockStore
+      newBill = new NewBill({
+        document, onNavigate, store, localStorage: window.localStorage
+      })
+    })
+    test('POST data then get fileUrl and key', async () => {
+      await newBill.createFile({})
+      expect(newBill.fileUrl).toEqual('https://localhost:3456/images/test.jpg')
+      expect(newBill.billId).toEqual('1234')
+    })
+    test("POST data to API and fails with 404 message error", async () => {
+
+      mockStore.bills.mockImplementationOnce(() => {
+        return {
+          create : () =>  {
+            return Promise.reject(new Error("Erreur 404"))
+          }
+        }})
+      await expect(newBill.createFile({})).rejects.toEqual(new Error("Erreur 404"))
+    })
+    test("POST data to API and fails with 500 message error", async () => {
+
+      mockStore.bills.mockImplementationOnce(() => {
+        return {
+          create : () =>  {
+            return Promise.reject(new Error("Erreur 500"))
+          }
+        }})
+      await expect(newBill.createFile({})).rejects.toEqual(new Error("Erreur 500"))
+    })
+  })
  })
 
- describe("test method displayErrorOnSubmit()",()=>{
-  beforeAll(()=>{
-    jest.useFakeTimers();
-  })
-  it("should call setTimeOut for 2second", ()=>{
-    const mockSetTimeOut = jest.spyOn(global, 'setTimeout');
-    newBill.displayErrorOnSubmit()
-    expect(mockSetTimeOut).toHaveBeenCalledTimes(1);
-    expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 2000);
-  })
-
-  test('at the end, the error should be removed', async()=> {
-   document.body.innerHTML = NewBillUI()
-   const errorSubmission = await waitFor(()=> screen.getByTestId('error-submit'))
-   expect(errorSubmission.classList.contains('hide-error')).toBe(true)
-   expect(errorSubmission.classList.contains('show-error')).toBe(false)
- })
- })
+ 
