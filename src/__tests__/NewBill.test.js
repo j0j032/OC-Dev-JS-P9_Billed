@@ -12,6 +12,7 @@
  let newBill;
  let inputFile;
  let inputFileGet;
+ let formNewBill;
  
  describe("Given I am connected as an employee", () => {
    beforeAll(() => {
@@ -83,9 +84,11 @@
          expect(createFile).toHaveBeenCalled()
        })
      })
-     describe("When i submit new bill form", () => {
-       test("Then bill is upserted and i am redirected to bills page", async () => {
-         const formNewBill = await waitFor(() => screen.getByTestId('form-new-bill'))
+     describe("When I submit new bill form", () => {
+      beforeAll( async () => {
+        formNewBill = await waitFor(() => screen.getByTestId('form-new-bill'))
+      })
+       test("Then bill is upserted and i am redirected to bills page", () => {
  
          const updateBill = jest.spyOn(newBill, 'updateBill')
          const onNavigate = jest.spyOn(newBill, 'onNavigate')
@@ -95,20 +98,18 @@
          expect(updateBill).toHaveBeenCalled()
          expect(onNavigate).toHaveBeenCalled()
        })
-       
-       /* test("if a file error message is display, then, user can't submit the form", async ()=>{
-         const formNewBill = await waitFor(() => screen.getByTestId('form-new-bill'))
-         const errorExtension = await waitFor(() => screen.getByTestId('error-extension'))
- 
-         errorExtension.classList.add('show-error')
-         console.log(errorExtension);
-         
-         const onNavigate = jest.spyOn(newBill, 'onNavigate')
+
+       test('if wrong upload file is not updated, it should display an error', async () => {
+        document.body.innerHTML = NewBillUI()
+        const errorExtension = await waitFor(() => screen.getByTestId('error-extension'))
+        errorExtension.classList.add('show-error')
+
+        const displayErrorOnSubmit = jest.spyOn(newBill, 'displayErrorOnSubmit')
  
          fireEvent.submit(formNewBill)
  
-         expect(onNavigate).not.toHaveBeenCalled()
-       }) */
+         expect(displayErrorOnSubmit).toHaveBeenCalled()
+       })
      })
    })
  })
