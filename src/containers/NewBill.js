@@ -69,6 +69,17 @@ export default class NewBill {
     }
   }
 
+  displayErrorOnSubmit = () => {
+    const errorSubmission = this.document.querySelector("div[data-testid='error-submit']");
+    console.log('Le fichier nest pas bon');
+    errorSubmission.classList.remove("hide-error");
+    errorSubmission.classList.add('show-error')
+    setTimeout(() => {
+      errorSubmission.classList.remove('show-error')
+      errorSubmission.classList.add("hide-error");
+    }, 2000)
+  }
+
 
   handleSubmit = (e) => {
     e.preventDefault();
@@ -88,18 +99,12 @@ export default class NewBill {
       fileName: this.fileName,
       status: "pending",
     };
-    const errorSubmission = this.document.querySelector("div[data-testid='error-submit']");
+    
     if(!errorExtension.classList.contains('show-error')){
       this.updateBill(bill);
       this.onNavigate(ROUTES_PATH["Bills"]);
     } else {
-      console.log('Le fichier nest pas bon');
-      errorSubmission.classList.remove("hide-error");
-      errorSubmission.classList.add('show-error')
-      setTimeout(() => {
-        errorSubmission.classList.remove('show-error')
-        errorSubmission.classList.add("hide-error");
-      }, 2000)
+      this.displayErrorOnSubmit()
     }
   };
 
