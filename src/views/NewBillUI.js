@@ -55,7 +55,8 @@ export default () => {
                   </div>
                   <div class="col-half">
                     <label for="file" class="bold-label">Justificatif</label>
-                    <input required type="file" class="form-control blue-border" data-testid="file" />
+                    <input required type="file" class="form-control blue-border" data-testid="file"/>
+                    <div data-testid = "error-extension" class= "hide-error"> Format invalide, seuls jpeg, jpg, png sont acceptés </div>
                   </div>
                 </div>
             </div>
@@ -63,6 +64,7 @@ export default () => {
               <div class="col-md-6">
                 <div class="col-half">
                   <button type="submit" id='btn-send-bill' class="btn btn-primary">Envoyer</button>
+                  <div data-testid = "error-submit" class="hide-error">Le formulaire n'est pas correctement rempli ! </div>
                 </div>
               </div>
             </div>
@@ -72,3 +74,10 @@ export default () => {
     </div>
   `)
 }
+
+/* to add more control when user upload file:
+add this attribute to input type file:
+ accept="image/png, image/jpeg, image/jpg" 
+ 
+ removed to show JS feature
+ */
