@@ -1,5 +1,6 @@
 import { formatDate } from '../app/format.js'
 import DashboardFormUI from '../views/DashboardFormUI.js'
+import BigBilledIcon from '../assets/svg/big_billed.js'
 import { ROUTES_PATH } from '../constants/routes.js'
 import USERS_TEST from '../constants/usersTest.js'
 import Logout from "./Logout.js"
@@ -86,7 +87,6 @@ export default class {
 
   handleEditTicket(e, bill, bills) {
     if (this.id === undefined || this.id !== bill.id) this.id = bill.id
-    console.log('id', this.id);
     bills.forEach(b => {
       $(`#open-bill${b.id}`).css({ background: '#0D5AE5' })
     })
@@ -119,11 +119,20 @@ export default class {
   }
 
   handleShowTickets(e, bills, index) {
+    if (this.counter === undefined || this.index !== index) this.counter = 0
     if (this.index === undefined || this.index !== index) this.index = index
-    console.log('index',this.index);
+    if (this.counter % 2 === 0) {
+      console.log(this.counter);
       $(`#arrow-icon${this.index}`).css({ transform: 'rotate(0deg)' })
       $(`#status-bills-container${this.index}`)
         .html(cards(filteredBills(bills, getStatus(this.index))))
+      this.counter++
+    } else {
+      $(`#arrow-icon${this.index}`).css({ transform: 'rotate(90deg)' })
+      $(`#status-bills-container${this.index}`)
+        .html("")
+      this.counter++
+    }
 
     bills.forEach(bill => {
       $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
