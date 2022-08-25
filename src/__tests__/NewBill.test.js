@@ -113,3 +113,22 @@
      })
    })
  })
+
+ describe("test method displayErrorOnSubmit()",()=>{
+  beforeAll(()=>{
+    jest.useFakeTimers();
+  })
+  it("should call setTimeOut for 2second", ()=>{
+    const mockSetTimeOut = jest.spyOn(global, 'setTimeout');
+    newBill.displayErrorOnSubmit()
+    expect(mockSetTimeOut).toHaveBeenCalledTimes(1);
+    expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 2000);
+  })
+
+  test('at the end, the error should be removed', async()=> {
+   document.body.innerHTML = NewBillUI()
+   const errorSubmission = await waitFor(()=> screen.getByTestId('error-submit'))
+   expect(errorSubmission.classList.contains('hide-error')).toBe(true)
+   expect(errorSubmission.classList.contains('show-error')).toBe(false)
+ })
+ })
